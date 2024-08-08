@@ -1,12 +1,6 @@
 ﻿using HtmlAgilityPack;
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace ConsoleApp2.Services;
 public static class YufeService
@@ -123,5 +117,4 @@ public static class YufeService
 
         return ufe;
     }
-   
 }

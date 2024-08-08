@@ -8,6 +8,4 @@ Write your code in this editor and press "Run" button to execute it.
 
 using ConsoleApp2;
 
-using System;
-
 DataInit.Run();

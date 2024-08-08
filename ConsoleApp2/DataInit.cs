@@ -1,8 +1,5 @@
 ﻿using ConsoleApp2.Business;
 using ConsoleApp2.Models;
-using HtmlAgilityPack;
-using System.Globalization;
-using System.Xml.Linq;
 
 namespace ConsoleApp2;
 
