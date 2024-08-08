@@ -10,4 +10,4 @@ using ConsoleApp2;
 
 using System;
 
-HelloWorld.Init();
+DataInit.Run();
