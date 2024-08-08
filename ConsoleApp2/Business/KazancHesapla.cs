@@ -1,6 +1,6 @@
-﻿using ConsoleApp2.Models;
+﻿using YurtDisiKazancHesapla.Models;
 
-namespace ConsoleApp2.Business;
+namespace YurtDisiKazancHesapla.Business;
 public class KazancHesapla
 {
     public static List<Sonuc> CalculateTax(Hisse hisse)

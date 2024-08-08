@@ -2,7 +2,7 @@
 
 using System.Globalization;
 
-namespace ConsoleApp2.Services;
+namespace YurtDisiKazancHesapla.Services;
 public static class YufeService
 {
     private static string? _yufeHtml = null;

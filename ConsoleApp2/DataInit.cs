@@ -1,7 +1,7 @@
-﻿using ConsoleApp2.Business;
-using ConsoleApp2.Models;
+﻿using YurtDisiKazancHesapla.Business;
+using YurtDisiKazancHesapla.Models;
 
-namespace ConsoleApp2;
+namespace YurtDisiKazancHesapla;
 
 public static class DataInit
 {

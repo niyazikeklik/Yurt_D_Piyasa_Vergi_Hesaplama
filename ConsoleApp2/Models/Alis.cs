@@ -1,6 +1,6 @@
-﻿namespace ConsoleApp2.Models;
+﻿namespace YurtDisiKazancHesapla.Models;
 
-using ConsoleApp2.Services;
+using YurtDisiKazancHesapla.Services;
 
 /******************************************************************************
 

@@ -1,4 +1,4 @@
-﻿namespace ConsoleApp2.Models;
+﻿namespace YurtDisiKazancHesapla.Models;
 
 /******************************************************************************
 

@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace ConsoleApp2.Services;
+namespace YurtDisiKazancHesapla.Services;
 public static class DovizService
 {
     public static async Task<decimal> GetDovizKuru(DateTime tarih)
