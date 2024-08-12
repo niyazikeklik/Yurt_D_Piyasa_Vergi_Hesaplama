@@ -1,4 +1,9 @@
-﻿using System.Xml.Linq;
+﻿using System.Text.Json;
+using System.Xml.Linq;
+
+using YurtDisiKazancHesapla.Models.Service;
+
+using static YurtDisiKazancHesapla.Models.Service.HıstoryModel;
 
 namespace YurtDisiKazancHesapla.Services;
 public static class DovizService
@@ -45,4 +50,5 @@ public static class DovizService
             throw new Exception("USD bilgisi bulunamadı");
         }
     }
+
 }

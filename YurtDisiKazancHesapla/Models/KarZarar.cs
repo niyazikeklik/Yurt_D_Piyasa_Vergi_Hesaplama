@@ -14,15 +14,21 @@ public class KarZarar
 {
     public Hisse Hisse { get; set; }
     public DateTime Tarih { get; set; }
-    public decimal ReelKarZararTutarTL { get; set; }
-    public decimal GerceklesenKarZararUsd { get; set; }
-    public decimal DovizSabitKalsaydiKarZararTl { get; set; }
-    public decimal UfeFarki { get; set; }
-    public decimal DovizKuruFarki { get; set; }
-    public decimal DovizKuruOrani { get; set; }
-    public decimal AlisSatisArasindakiGunFarki { get; set; }
+    public int Year => Tarih.Year;
+    public int Month => Tarih.Month;
+    public string HisseKodu => Hisse.Sembol;
+    public decimal VergiIcınGelir { get; set; }
+    public decimal AsılGelirTL { get; set; }
+    public decimal AsılMaliyetTL { get; set; }
+    public decimal GelirKazancFarkiTL => AsılGelirTL - AsılMaliyetTL;
+    public decimal DolarSabitKalsaKazancTL { get; set; }
+    public decimal AsılGelirUSD { get; set; }
+    public decimal AsılMaliyetUSD { get; set; }
+    public decimal GelirKazancFarkiUSD => AsılGelirUSD - AsılMaliyetUSD;
     public decimal AlisDovizKuru { get; set; }
     public decimal SatisDovizKuru { get; set; }
-
+    public decimal KaraKurEtkisiOran => SatisDovizKuru  / AlisDovizKuru;
+    public decimal UfeIndirimi { get; set; }
+    public decimal AsilUfe { get; set; }
 }
 

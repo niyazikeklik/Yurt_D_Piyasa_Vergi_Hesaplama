@@ -7,5 +7,8 @@ Write your code in this editor and press "Run" button to execute it.
 *******************************************************************************/
 
 using YurtDisiKazancHesapla;
+using YurtDisiKazancHesapla.Business;
 
 DataInit.Run();
+//var x = new AltinSertifikasi().Hesapla().Result;
+Console.Read();

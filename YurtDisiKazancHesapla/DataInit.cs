@@ -96,13 +96,29 @@ public static class DataInit
             }
         });
 
-        List<Sonuc> sonuclar = new List<Sonuc>();
+        Hissler.Add(new()
+        {
+            Sembol = "3x Long QQQ",
+            Alislar = new List<Alis>
+         {
+             new Alis { Tarih = new DateTime(2024, 8, 1), Fiyat = 62.32m, Adet = 160.462454208m },
+             new Alis { Tarih = new DateTime(2024, 8, 6), Fiyat = 54.75m, Adet = 100.016803652m },
+         },
+            Satislar = new List<Satis>
+         {
+                new Satis { Tarih = new DateTime(2024, 8, 12), Fiyat = 60m, Adet = 260m },
+              //  new Satis { Tarih = new DateTime(2024, 8, 12), Fiyat = 85m, Adet = 160.47m },
+          }
+        });
+
+        List<KarZarar> sonuclar = new List<KarZarar>();
         foreach (var hisse in Hissler)
         {
-            var sonuc = KazancHesapla.CalculateTax(hisse);
+            var sonuc = KazancHesapla.GelirHesapla(hisse);
             sonuclar.AddRange(sonuc);
         }
-
+        //Yil bazinda kazanc hesapla
+        KazancHesapla.VergiHesapla(sonuclar);
         Console.Read();
     }
 }

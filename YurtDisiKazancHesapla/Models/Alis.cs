@@ -16,7 +16,7 @@ public class Alis
 {
     public DateTime Tarih { get; set; }
     public decimal Fiyat { get; set; }
-    public int Adet { get; set; }
+    public decimal Adet { get; set; }
     public decimal ToplamTutar => Fiyat * Adet;
     public decimal Kur => DovizService.GetDovizKuru(Tarih).Result;
     public decimal Ufe => YufeService.GetValueForYearAndMonth(Tarih.Year, Tarih.Month);
