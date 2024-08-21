@@ -5,9 +5,14 @@ namespace YurtDisiKazancHesapla;
 
 public static class DataInit
 {
-    public static void Run()
+    public enum FormMode
     {
-
+        Add,
+        Edit,
+        View
+    }
+    public static List<Hisse> GetHisses()
+    {
         List<Hisse> Hissler = new List<Hisse>();
 
         // DIS 
@@ -111,8 +116,13 @@ public static class DataInit
           }
         });
 
+        return Hissler;
+    }
+
+    public static void Run()
+    {
         List<KarZarar> sonuclar = new List<KarZarar>();
-        foreach (var hisse in Hissler)
+        foreach (var hisse in GetHisses())
         { 
             var sonuc = KazancHesapla.GelirHesapla(hisse);
             sonuclar.AddRange(sonuc);

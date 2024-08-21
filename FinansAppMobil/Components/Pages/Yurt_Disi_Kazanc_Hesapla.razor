@@ -1,0 +1,199 @@
+﻿@page "/hisseler"
+@using System.Collections.Generic
+@using FinansAppMobil.Services
+@using FinansCore.Models
+@using FinansCore.Models.ViewModel
+@using Radzen
+@using static YurtDisiKazancHesapla.DataInit
+<h3 class="title">Hisse Alış/Satış Yönetimi</h3>
+
+<style>
+
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .hisse-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .hisse-form {
+        flex: 1;
+        max-width: 300px;
+    }
+
+    .hisse-list {
+        flex: 3;
+    }
+
+    .input-large {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .RadzenCard {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .RadzenPanelMenu {
+        border: none;
+    }
+
+</style>
+
+<div class="hisse-container">
+  
+
+    <div class="hisse-list">
+        <RadzenFieldset Text="Hisseler">
+            <RadzenCard Style="margin-bottom: 20px;">
+                <RadzenPanelMenu>
+                    <RadzenPanelMenuItem Text="Hisse Ekle" Icon="add" Click="HisseEkle" />
+                </RadzenPanelMenu>
+             </RadzenCard>
+            @foreach (var h in hisseler)
+            {
+                <RadzenCard Style="margin-bottom: 20px;">
+                    <RadzenPanelMenu>
+                        <RadzenPanelMenuItem Text="@h.Sembol" Icon="bar_chart">
+                            <RadzenPanelMenuItem Text="Alışlar" Icon="shopping_cart">
+                                <RadzenButton Click="@(args => AlisEkle(h))" Class="btn btn-success btn-sm m-3" icon="add" />
+                                <RadzenDataGrid TItem="Alis" Data="@h.Alislar" EditMode="Radzen.DataGridEditMode.Single" AllowEdit="true">
+                                    <Columns>
+                                        <RadzenDataGridColumn TItem="Alis" Property="Fiyat" Title="Fiyat">
+                                            <EditTemplate Context="data">
+                                                <RadzenNumeric @bind-Value="data.Fiyat" Min="0" />
+                                            </EditTemplate>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="Alis" Property="Adet" Title="Adet">
+                                            <EditTemplate Context="data">
+                                                <RadzenNumeric @bind-Value="data.Adet" Min="0" />
+                                            </EditTemplate>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="Alis" Property="Tarih" Title="Tarih">
+                                            <EditTemplate Context="data">
+                                                <RadzenDatePicker @bind-Value="data.Tarih" />
+                                            </EditTemplate>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn Title="Aksiyon">
+                                            <Template Context="data">
+
+                                                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Click="@(args =>  HisseAlisSil(h, data))" />
+                                            </Template>
+
+                                        </RadzenDataGridColumn>
+                                    </Columns>
+                                </RadzenDataGrid>
+                            </RadzenPanelMenuItem>
+                            <RadzenPanelMenuItem Text="Satışlar" Icon="money_off" class="mt-3">
+                                <RadzenButton Click="@(args => SatisEkle(h))" Class="btn btn-warning btn-sm m-3" icon="add" />
+                                <RadzenDataGrid TItem="Satis" Data="@h.Satislar" EditMode="Radzen.DataGridEditMode.Single" AllowEdit="true">
+                                    <Columns>
+                                        <RadzenDataGridColumn TItem="Satis" Property="Fiyat" Title="Fiyat">
+                                            <EditTemplate Context="data">
+                                                <RadzenNumeric @bind-Value="data.Fiyat" Min="0" />
+                                            </EditTemplate>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="Satis" Property="Adet" Title="Adet">
+                                            <EditTemplate Context="data">
+                                                <RadzenNumeric @bind-Value="data.Adet" Min="0" />
+                                            </EditTemplate>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="Satis" Property="Tarih" Title="Tarih">
+                                            <EditTemplate Context="data">
+                                                <RadzenDatePicker @bind-Value="data.Tarih" />
+                                            </EditTemplate>
+                                        </RadzenDataGridColumn>
+                                           <RadzenDataGridColumn  Title="Aksiyon">
+                                               <Template Context="data">
+                                                 <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Click="@(args =>  HisseSatisSil(h, data))" />
+                                                </Template>
+                                           </RadzenDataGridColumn>
+                                    </Columns>
+                                </RadzenDataGrid>
+                            </RadzenPanelMenuItem>
+                        </RadzenPanelMenuItem>
+                        <RadzenPanelMenuItem Text="Hisse Sil" Icon="delete" Click="@(args => hisseler.Remove(h))" />
+                    </RadzenPanelMenu>
+                </RadzenCard>
+            }
+        </RadzenFieldset>
+    </div>
+</div>
+
+
+@code {
+    private List<Hisse> hisseler { get; set; }
+    SatisViewModel satisViewModel = new SatisViewModel();
+    PromptService promptService = new PromptService();
+
+    protected override void OnInitialized()
+    {
+        hisseler = GetHisses();
+    }
+
+    private async Task HisseEkle()
+    {
+        var isim = await promptService.InputMessage("Hisse Adı", "Hisse adını giriniz");
+        var hisse = new Hisse() { Sembol = isim };
+        hisseler.Add(hisse);
+    }
+
+    private void AlisEkle(Hisse h)
+    {
+        h.Alislar.Add(new Alis());
+    }
+
+    private void SatisEkle(Hisse h)
+    {
+        h.Satislar.Add(new Satis());
+    }
+
+    private void HisseSatisSil(Hisse h, Satis s)
+    {
+        foreach (var hisse in hisseler)
+        {
+            if (hisse.Sembol == h.Sembol)
+            {
+                hisse.Satislar.Remove(s);
+
+
+
+                break;
+            }
+        }
+    }
+
+    private void HisseAlisSil(Hisse h, Alis a)
+    {
+        foreach (var hisse in hisseler)
+        {
+            if (hisse.Sembol == h.Sembol)
+            {
+                hisse.Alislar.Remove(a);
+
+            }
+        }
+
+
+    }
+}

@@ -1,0 +1,261 @@
+﻿@page "/YurtDisiIslemGrid"
+
+@using Radzen
+@using Microsoft.EntityFrameworkCore
+@using YurtDisiKazancHesapla
+@using YurtDisiKazancHesapla.Business
+
+<style>
+    .rz-grid-table {
+        width: unset;
+    }
+</style>
+
+<RadzenCard Variant="Variant.Outlined" class="rz-my-4">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+        <div>Edit Mode:</div>
+        <RadzenSelectBar @bind-Value="@editMode" TextProperty="Text" ValueProperty="Value"
+                         Data="@(Enum.GetValues(typeof(DataGridEditMode)).Cast<DataGridEditMode>().Select(t => new { Text = $"{t}", Value = t }))" Size="ButtonSize.Small"
+                         Disabled="@(editMode == DataGridEditMode.Multiple && islemsToInsert.Count() > 1)" />
+
+        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="refresh" Click="@GelirHesapla" />
+    </RadzenStack>
+
+</RadzenCard>
+
+<RadzenDataGrid @ref="islemsGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="100" AllowSorting="true" EditMode="@editMode"
+                AllowColumnReislem="true"
+                AllowPickAllColumns="true"
+                AllowColumnPicking="true"
+                Render="@OnRender"
+                AllowGrouping="true"
+                AllowMultiColumnSorting="true"
+                Data="@islems" TItem="Islem" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" Sort="@Reset" Page="@Reset" Filter="@Reset" ColumnWidth="200px"
+                GroupPanelText="Gruplamak istediğiniz sütunu buraya sürükleyin">
+    <HeaderTemplate>
+        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle" Text="Add New islem" Click="@InsertRow" Disabled="@(editMode == DataGridEditMode.Single && islemsToInsert.Count() > 0)" />
+    </HeaderTemplate>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(Islem.Sembol)" Title="Sembol">
+            <EditTemplate Context="islem">
+                <RadzenTextBox @bind-Value="islem.Sembol" Style="width:200px; display: block" Name="Sembol" aria-label="Sembol adı giriniz" />
+                <RadzenRequiredValidator Text="Sembol Adı gereklidir." Component="Sembol" Popup="true" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Property="@nameof(Islem.IslemTuru)" Title="İşlem Tipi">
+            <Template Context="islem">
+                @if (islem.IslemTuru == IslemTuru.Alis)
+                {
+                    <RadzenBadge BadgeStyle="BadgeStyle.Success" Shade="Shade.Dark">
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.25rem" Style="padding: 0 0.25rem 0 0; text-transform: none;">
+                            <RadzenIcon Icon="shopping_cart" />Alış
+                        </RadzenStack>
+                    </RadzenBadge>
+
+                }
+                else if (islem.IslemTuru == IslemTuru.Satis)
+                {
+                    <RadzenBadge BadgeStyle="BadgeStyle.Danger" Shade="Shade.Dark">
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.25rem" Style="padding: 0 0.25rem 0 0; text-transform: none;">
+                            <RadzenIcon Icon="sell" />Satış
+                        </RadzenStack>
+                    </RadzenBadge>
+
+
+                }
+            </Template>
+            <EditTemplate Context="islem">
+                <RadzenDropDown @bind-Value="islem.IslemTuru" Data="Enum.GetValues(typeof(IslemTuru)).Cast<IslemTuru>()" Style="width:100%"
+                                InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select islem type" }})" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn Property="@nameof(Islem.Tarih)" Title="İşlem Tarihi" Width="200px">
+            <Template Context="islem">
+                @String.Format("{0:d}", islem.Tarih)
+            </Template>
+            <EditTemplate Context="islem">
+                <RadzenDatePicker @bind-Value="islem.Tarih" Style="width:100%" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select islem date" }})" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+
+        <RadzenDataGridColumn Property="@nameof(Islem.Adet)" Title="Adet">
+            <Template Context="islem">
+                @islem.Adet
+            </Template>
+            <EditTemplate Context="islem">
+                <RadzenNumeric @bind-Value="islem.Adet" Style="width:100%" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select freight" }})" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Property="@nameof(Islem.Fiyat)" Title="Fiyat">
+            <Template Context="islem">
+                @String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", islem.Fiyat)
+            </Template>
+            <EditTemplate Context="islem">
+                <RadzenNumeric @bind-Value="islem.Fiyat" Style="width:100%" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select freight" }})" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Context="islem" Filterable="false" Sortable="false" TextAlign="TextAlign.Right" Frozen="true" FrozenPosition="FrozenColumnPosition.Right" Title="İşlemler">
+            <Template Context="islem">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(islem))" @onclick:stopPropagation="true">
+                </RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRow(islem))" @onclick:stopPropagation="true">
+                </RadzenButton>
+            </Template>
+            <EditTemplate Context="islem">
+                <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(islem))" aria-label="Save">
+                </RadzenButton>
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@((args) => CancelEdit(islem))" aria-label="Cancel">
+                </RadzenButton>
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRow(islem))" aria-label="Delete">
+                </RadzenButton>
+            </EditTemplate>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+@* Modal for Karzara sonuc *@
+
+    <KarzararSonucGrid KarZarars="@karZararlar" />
+
+
+@code {
+    RadzenDataGrid<Islem> islemsGrid;
+    IEnumerable<Islem> islems;
+
+    DataGridEditMode editMode = DataGridEditMode.Single;
+    Converter converter = new Converter();
+
+    List<Islem> islemsToInsert = new List<Islem>();
+    List<Islem> islemsToUpdate = new List<Islem>();
+
+    RadzenDialog confirmDeleteDialog;
+    bool isDeleteDialogVisible = false;
+
+    void Reset()
+    {
+        islemsToInsert.Clear();
+        islemsToUpdate.Clear();
+    }
+
+    void Reset(Islem islem)
+    {
+        islemsToInsert.Remove(islem);
+        islemsToUpdate.Remove(islem);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        islems = converter.ConvertToIslems(DataInit.GetHisses());
+        //default grid grup
+
+
+    }
+
+    List<GroupDescriptor> defaultGropus = new List<GroupDescriptor>()
+    {
+        new GroupDescriptor() { Property = nameof(Islem.Sembol), Title = "Sembol", SortOrder = SortOrder.Descending },
+        new GroupDescriptor() { Property = nameof(Islem.IslemTuru), Title = "İşlem Türü", SortOrder = SortOrder.Descending }
+    };
+
+    void ResetDefaultGroups(RadzenDataGrid<Islem> grid)
+    {
+        grid.Groups.Clear();
+        foreach (var group in defaultGropus)
+        {
+            grid.Groups.Add(group);
+        }
+    }
+
+
+    void OnRender(DataGridRenderEventArgs<Islem> renderFragment)
+    {
+        if(renderFragment.FirstRender)
+        {
+            ResetDefaultGroups(renderFragment.Grid);
+        }
+    }
+
+
+    async Task EditRow(Islem islem)
+    {
+        if (editMode == DataGridEditMode.Single && islemsToInsert.Count() > 0)
+        {
+            Reset();
+        }
+
+        islemsToUpdate.Add(islem);
+        await islemsGrid.EditRow(islem);
+    }
+
+    void OnUpdateRow(Islem islem)
+    {
+        Reset(islem);
+
+    }
+
+    async Task SaveRow(Islem islem)
+    {
+        await islemsGrid.UpdateRow(islem);
+        ResetDefaultGroups(islemsGrid);
+    }
+
+    void CancelEdit(Islem islem)
+    {
+        Reset(islem);
+
+        islemsGrid.CancelEditRow(islem);
+
+        if (islemsToInsert.Contains(islem))
+        {
+            islemsToInsert.Remove(islem);
+        }
+    }
+
+    async Task DeleteRow(Islem islem)
+    {
+        Reset(islem);
+
+        if (islems.Contains(islem))
+        {
+            islems = islems.Except(new Islem[] { islem });
+            await islemsGrid.Reload();
+        }
+        else
+        {
+            islemsGrid.CancelEditRow(islem);
+            await islemsGrid.Reload();
+        }
+    }
+
+    async Task InsertRow()
+    {
+        islemsGrid.Groups.Clear();
+        if (editMode == DataGridEditMode.Single)
+        {
+            Reset();
+        }
+
+        var islem = new Islem();
+        islemsToInsert.Add(islem);
+        await islemsGrid.InsertRow(islem);
+    }
+
+    void OnCreateRow(Islem islem)
+    {
+        islemsToInsert.Remove(islem);
+    }
+    List<KarZarar> karZararlar = new List<KarZarar>();
+    async Task GelirHesapla()
+    {
+        List<Hisse> hisseler = converter.ConvertToHisses(islems.ToList());
+        karZararlar.Clear();
+        foreach (var hisse in hisseler)
+        {
+            var hise = KazancHesapla.GelirHesapla(hisse);
+            karZararlar.AddRange(hise);
+        }
+        isDeleteDialogVisible = true;
+
+    }
+}

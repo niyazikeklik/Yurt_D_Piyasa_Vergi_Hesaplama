@@ -1,0 +1,58 @@
+﻿
+
+
+<RadzenDataGrid @ref="KarZararsGrid" AllowAlternatingRows="false" AllowFiltering="true" AllowPaging="true" PageSize="100" AllowSorting="true"
+                AllowPickAllColumns="true"
+                AllowColumnPicking="true"
+                AllowGrouping="true"
+                AllowMultiColumnSorting="true"
+                Data="@KarZarars" TItem="KarZarar" ColumnWidth="200px"
+                GroupPanelText="Gruplamak istediğiniz sütunu buraya sürükleyin">
+    <Columns>
+
+        @*      public int Year => Tarih.Year;
+        public int Month => Tarih.Month;
+        public string HisseKodu => Hisse.Sembol;
+        public decimal VergiIcınGelir { get; set; }
+        public decimal AsılGelirTL { get; set; }
+        public decimal AsılMaliyetTL { get; set; }
+        public decimal GelirKazancFarkiTL => AsılGelirTL - AsılMaliyetTL;
+        public decimal DolarSabitKalsaKazancTL { get; set; }
+        public decimal AsılGelirUSD { get; set; }
+        public decimal AsılMaliyetUSD { get; set; }
+        public decimal GelirKazancFarkiUSD => AsılGelirUSD - AsılMaliyetUSD;
+        public decimal AlisDovizKuru { get; set; }
+        public decimal SatisDovizKuru { get; set; }
+        public decimal KaraKurEtkisiOran => SatisDovizKuru  / AlisDovizKuru;
+        public decimal UfeIndirimi { get; set; }
+        public decimal AsilUfe { get; set; } *@
+
+        <RadzenDataGridColumn TItem="KarZarar" Property="Year" Title="Yıl" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="Month" Title="Ay" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="HisseKodu" Title="Hisse Kodu" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="VergiIcınGelir" Title="Vergi İçin Gelir" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="AsılGelirTL" Title="Asıl Gelir TL" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="AsılMaliyetTL" Title="Asıl Maliyet TL" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="GelirKazancFarkiTL" Title="Gelir Kazanc Farkı TL" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="DolarSabitKalsaKazancTL" Title="Dolar Sabit Kalsa Kazanc TL" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="AsılGelirUSD" Title="Asıl Gelir USD" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="AsılMaliyetUSD" Title="Asıl Maliyet USD" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="GelirKazancFarkiUSD" Title="Gelir Kazanc Farkı USD" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="AlisDovizKuru" Title="Alış Döviz Kuru" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="SatisDovizKuru" Title="Satış Döviz Kuru" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="KaraKurEtkisiOran" Title="Kar Kur Etkisi Oran" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="UfeIndirimi" Title="ÜFE İndirimi" />
+        <RadzenDataGridColumn TItem="KarZarar" Property="AsilUfe" Title="Asıl ÜFE" />
+    </Columns>
+
+
+
+
+</RadzenDataGrid>
+
+@code
+{
+    [Parameter]
+    public List<KarZarar> KarZarars { get; set; }
+    RadzenDataGrid<KarZarar> KarZararsGrid;
+}
